@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+import App from '../components/App';
+import logoSrc from '../assets/logo/tratree-logo.png?url';
+const logo = logoSrc;
+---
+<Layout>
+  <!-- Sky layers driven by --t via JS -->
+  <div class="sky-canvas" id="skyCanvas"></div>
+  <div class="sky-veil" id="skyVeil"></div>
+
+  <!-- Global SVG defs — watercolor filters -->
+  <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
+    <defs>
+      <filter id="wc-global" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="3" result="big"/>
+        <feDisplacementMap in="SourceGraphic" in2="big" scale="10" result="disp"/>
+        <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="7" result="grain"/>
+        <feColorMatrix in="grain" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0" result="grainA"/>
+        <feComposite in="grainA" in2="disp" operator="in" result="grainIn"/>
+        <feMerge><feMergeNode in="disp"/><feMergeNode in="grainIn"/></feMerge>
+      </filter>
+      <filter id="wc-edge" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="2" seed="9" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="14" result="d"/>
+        <feMorphology in="d" operator="dilate" radius="1.6" result="thick"/>
+        <feComposite in="thick" in2="d" operator="out" result="ring"/>
+        <feGaussianBlur in="ring" stdDeviation="1.6" result="ringSoft"/>
+        <feColorMatrix in="ringSoft" values="0.30 0 0 0 0  0 0.30 0 0 0  0 0 0.25 0 0  0 0 0 0.9 0" result="darkRing"/>
+        <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2" seed="13" result="gr"/>
+        <feColorMatrix in="gr" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.28 0" result="grA"/>
+        <feComposite in="grA" in2="d" operator="in" result="grIn"/>
+        <feMerge><feMergeNode in="d"/><feMergeNode in="grIn"/><feMergeNode in="darkRing"/></feMerge>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Preloader -->
+  <div class="preloader" id="preloader">
+    <svg class="seed-path" viewBox="0 0 520 90" fill="none" aria-hidden="true">
+      <path id="seedPath" d="M 8 50 C 80 4, 160 90, 240 46 S 420 4, 512 50" />
+    </svg>
+    <div class="pl-word">
+      <img src={logo} alt="tratree" style="height:72px; width:auto; display:block;" />
+    </div>
+  </div>
+
+  <!-- Fixed chrome -->
+  <header class="chrome" id="chrome">
+    <a href="#wish" style="display:inline-block; line-height:0; margin: 0 15px;">
+      <img src={logo} alt="tratree" style="height:66px; width:auto; display:block;" />
+    </a>
+    <nav class="nav">
+      <a href="#stories">stories</a>
+      <a href="#wish">the wish</a>
+      <a href="#begin">begin your flight</a>
+    </nav>
+  </header>
+
+  <!-- Diary + sound corners -->
+  <div class="corner-bl" id="cornerBl">
+    <div class="diary" id="diary">
+      <span class="hand">day</span>
+      <span class="num mono" id="dayNum">01</span>
+    </div>
+  </div>
+  <div class="corner-br">
+    <button class="pill" id="soundToggle" type="button" aria-pressed="false">
+      <span class="dot"></span>
+      <span id="soundLabel">silent</span>
+    </button>
+  </div>
+
+  <!-- Bird (fixed; position set by JS) -->
+  <div class="bird-fixed" id="birdFixed" aria-hidden="true"></div>
+
+  <!-- Flight path layer -->
+  <div class="flight-layer" id="flightLayer" aria-hidden="true">
+    <svg id="flightSvg" preserveAspectRatio="none" viewBox="0 0 1000 8000">
+      <path id="flightPath" class="dash" d="M 500 0" />
+      <path id="flightPathDrawn" class="drawn" d="M 500 0" />
+    </svg>
+  </div>
+
+  <!-- React App -->
+  <main id="app">
+    <App client:only="react" />
+  </main>
+</Layout>
