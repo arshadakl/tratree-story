@@ -3,6 +3,6 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://tratree.com',
+  site: 'https://tratree.in',
   integrations: [react(), sitemap()],
 });
