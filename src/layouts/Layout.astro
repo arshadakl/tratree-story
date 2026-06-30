@@ -3,15 +3,77 @@ import '../styles/global.css';
 
 interface Props {
   title?: string;
+  description?: string;
 }
-const { title = 'tratree — a tree once dreamed of travelling' } = Astro.props;
+
+const {
+  title = 'tratree — Holiday Packages, Resort & Bus Booking | Family, Student & Couples Travel',
+  description = 'tratree is a trusted travel company offering affordable holiday packages, resort booking, bus booking, and curated tours for students, families, and couples. Contact us for international & couples packages.',
+} = Astro.props;
+
+const siteName = 'tratree';
+const siteUrl = 'https://tratree.com';
+const ogImage = `${siteUrl}/og-image.jpg`;
 ---
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Primary SEO -->
   <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="keywords" content="travel company, holiday packages, resort booking, bus booking, student tour packages, family travel packages, couples tour packages, international tour packages, affordable travel packages, group tours, vacation packages, travel booking" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="tratree" />
+  <link rel="canonical" href={siteUrl} />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={siteUrl} />
+  <meta property="og:site_name" content={siteName} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "name": "tratree",
+    "url": siteUrl,
+    "description": description,
+    "serviceType": [
+      "Holiday Packages",
+      "Resort Booking",
+      "Bus Booking",
+      "Student Tour Packages",
+      "Family Tour Packages",
+      "Couples Tour Packages",
+      "International Tour Packages"
+    ],
+    "areaServed": {
+      "@type": "Country",
+      "name": "India"
+    },
+    "offers": [
+      { "@type": "Offer", "name": "Holiday Package", "description": "Curated holiday packages for all budgets" },
+      { "@type": "Offer", "name": "Resort & Bus Booking", "description": "Comfortable resort stays and bus bookings" },
+      { "@type": "Offer", "name": "Students Package", "description": "Affordable group tours for students" },
+      { "@type": "Offer", "name": "Family Package", "description": "Memorable family vacation packages" },
+      { "@type": "Offer", "name": "International & Couples Package", "description": "Romantic and international tour packages" }
+    ]
+  })} />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Caveat:wght@400;500;600&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet" />

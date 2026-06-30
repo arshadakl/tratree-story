@@ -1,0 +1,26 @@
+# tratree
+
+> tratree is a travel company that brings the world to you — affordable holiday packages, resort & bus booking, and curated tours for students, families, and couples. Contact us for international and couples packages.
+
+## Services
+
+- Holiday Packages — curated multi-day tour packages for all budgets
+- Resort Booking — handpicked resort stays with travel arrangements
+- Bus Booking — comfortable group bus travel for tours and trips
+- Students Package — affordable group tour packages for student groups
+- Family Package — memorable family vacation packages, domestic and outstation
+- International Package — overseas tour packages (contact for enquiry)
+- Couples Package — romantic getaway packages (contact for enquiry)
+
+## About
+
+tratree was born from a simple idea: a tree that dreams of travelling. A bird lands on its branch, offers a deal — give me a nest, I'll tell you everything I see. tratree is that bird. We bring stories, places, and experiences to those who seek to travel.
+
+## Contact
+
+- For international and couples packages: contact via website
+- Website: https://tratree.com
+
+## Sitemap
+
+- https://tratree.com — main page (scroll-driven travel experience)
