@@ -54,41 +54,54 @@ const DESTINATIONS = [
 // ────────────────────────────────────────────────
 const TOD_KEYS = {
   golden: { top: '#e8c184', mid: '#eadcb6', bot: '#f1e8d2', ink: '#1b2317', veil: 'rgba(217,154,75,0.10)' },
-  day:    { top: '#c8d8e0', mid: '#e2dcc6', bot: '#f1e8d2', ink: '#1b2317', veil: 'rgba(0,0,0,0)' },
-  dusk:   { top: '#6a6a92', mid: '#c08a6a', bot: '#d99a4b', ink: '#231b2a', veil: 'rgba(106,106,146,0.16)' },
-  night:  { top: '#0e1424', mid: '#1a2238', bot: '#3a3450', ink: '#e8e0c4', veil: 'rgba(0,0,0,0.30)' },
+  day: { top: '#c8d8e0', mid: '#e2dcc6', bot: '#f1e8d2', ink: '#1b2317', veil: 'rgba(0,0,0,0)' },
+  dusk: { top: '#6a6a92', mid: '#c08a6a', bot: '#d99a4b', ink: '#231b2a', veil: 'rgba(106,106,146,0.16)' },
+  night: { top: '#1c172a', mid: '#362338', bot: '#61343a', ink: '#e8e0c4', veil: 'rgba(0,0,0,0.40)' },
+  pitchBlack: { top: '#000000', mid: '#000000', bot: '#000000', ink: '#e8e0c4', veil: 'rgba(0,0,0,0)' },
 };
 
 function lerpColor(a: string, b: string, t: number): string {
-  const pa = [parseInt(a.slice(1,3),16), parseInt(a.slice(3,5),16), parseInt(a.slice(5,7),16)];
-  const pb = [parseInt(b.slice(1,3),16), parseInt(b.slice(3,5),16), parseInt(b.slice(5,7),16)];
-  const r = Math.round(pa[0] + (pb[0]-pa[0])*t);
-  const g = Math.round(pa[1] + (pb[1]-pa[1])*t);
-  const bl = Math.round(pa[2] + (pb[2]-pa[2])*t);
-  return `#${[r,g,bl].map(v => v.toString(16).padStart(2,'0')).join('')}`;
+  const A = a.match(/\w\w/g)?.map((c) => parseInt(c, 16)) || [0,0,0];
+  const B = b.match(/\w\w/g)?.map((c) => parseInt(c, 16)) || [0,0,0];
+  const r = Math.round(A[0] + (B[0] - A[0]) * t);
+  const g = Math.round(A[1] + (B[1] - A[1]) * t);
+  const bl = Math.round(A[2] + (B[2] - A[2]) * t);
+  return `rgb(${r},${g},${bl})`;
 }
 
 function lerpRgba(a: string, b: string, t: number): string {
   const parse = (s: string) => {
-    const m = s.match(/rgba?\(([^)]+)\)/);
-    if (!m) return [0,0,0,0];
-    const parts = m[1].split(',').map(p => parseFloat(p));
-    return [parts[0]||0, parts[1]||0, parts[2]||0, parts[3] ?? 1];
+    const m = s.match(/rgba?\((\d+),(\d+),(\d+),?([\d.]+)?\)/);
+    if (!m) return [0,0,0,1];
+    return [parseInt(m[1]), parseInt(m[2]), parseInt(m[3]), parseFloat(m[4] || '1')];
   };
-  const A = parse(a), B = parse(b);
-  const r = Math.round(A[0] + (B[0]-A[0])*t);
-  const g = Math.round(A[1] + (B[1]-A[1])*t);
-  const bl = Math.round(A[2] + (B[2]-A[2])*t);
-  const al = (A[3] + (B[3]-A[3])*t).toFixed(3);
+  const A = parse(a);
+  const B = parse(b);
+  const r = Math.round(A[0] + (B[0] - A[0]) * t);
+  const g = Math.round(A[1] + (B[1] - A[1]) * t);
+  const bl = Math.round(A[2] + (B[2] - A[2]) * t);
+  const al = (A[3] + (B[3] - A[3]) * t).toFixed(3);
   return `rgba(${r},${g},${bl},${al})`;
 }
 
-function todAtProgress(p: number) {
+function todAtProgress(p: number, nightProgress: number, blackProgress: number) {
   let a: (typeof TOD_KEYS)[keyof typeof TOD_KEYS], b: (typeof TOD_KEYS)[keyof typeof TOD_KEYS], t: number;
-  if (p < 0.18)      { a = TOD_KEYS.golden; b = TOD_KEYS.day;   t = p / 0.18; }
-  else if (p < 0.65) { a = TOD_KEYS.day;    b = TOD_KEYS.day;   t = (p - 0.18) / (0.65 - 0.18); }
-  else if (p < 0.85) { a = TOD_KEYS.day;    b = TOD_KEYS.dusk;  t = (p - 0.65) / 0.20; }
-  else               { a = TOD_KEYS.dusk;   b = TOD_KEYS.night; t = (p - 0.85) / 0.15; }
+  
+  if (blackProgress > 0) {
+    a = TOD_KEYS.night; b = TOD_KEYS.pitchBlack; t = blackProgress;
+  } else if (nightProgress > 0) {
+    if (nightProgress < 0.5) {
+      a = TOD_KEYS.day; b = TOD_KEYS.dusk; t = nightProgress / 0.5;
+    } else {
+      a = TOD_KEYS.dusk; b = TOD_KEYS.night; t = (nightProgress - 0.5) / 0.5;
+    }
+  } else {
+    if (p < 0.15) { 
+      a = TOD_KEYS.golden; b = TOD_KEYS.day; t = p / 0.15; 
+    } else { 
+      a = TOD_KEYS.day; b = TOD_KEYS.day; t = 0; 
+    }
+  }
   t = Math.max(0, Math.min(1, t));
   return {
     top: lerpColor(a.top, b.top, t),
@@ -185,8 +198,8 @@ export default function App() {
   // Build flight path
   const rebuildPath = useCallback(() => {
     const layer = flightLayerRef.current;
-    const svg   = flightSvgRef.current;
-    const path  = flightPathRef.current;
+    const svg = flightSvgRef.current;
+    const path = flightPathRef.current;
     const drawn = flightPathDrawnRef.current;
     if (!layer || !svg || !path || !drawn) { setTimeout(rebuildPath, 300); return; }
 
@@ -195,7 +208,9 @@ export default function App() {
       setTimeout(rebuildPath, 300); return;
     }
 
+    layer.style.display = 'none';
     const docH = document.documentElement.scrollHeight;
+    layer.style.display = 'block';
     layer.style.height = `${docH}px`;
     svg.setAttribute('viewBox', `0 0 1000 ${docH}`);
 
@@ -206,26 +221,25 @@ export default function App() {
     }
     function vbX(screenX: number) { return (screenX / vw) * 1000; }
 
-    const heroSky    = { x: vbX(vw * 0.78), y: pageY(document.getElementById('wish'), 240) };
-    const heroDown   = { x: vbX(vw * 0.55), y: pageY(document.getElementById('arrival'), -60) };
+    const heroSky = { x: vbX(vw * 0.78), y: pageY(document.getElementById('wish'), 240) };
+    const heroDown = { x: vbX(vw * 0.55), y: pageY(document.getElementById('arrival'), -60) };
     const branchLand = { x: vbX(vw * 0.52), y: pageY(document.querySelector('#arrival .branch-stage'), 360) };
-    const lift       = { x: vbX(vw * 0.50), y: pageY(document.getElementById('departure'), 80) };
-    const skyHigh    = { x: vbX(vw * 0.32), y: pageY(document.getElementById('departure'), 380) };
+    const lift = { x: vbX(vw * 0.50), y: pageY(document.getElementById('departure'), 80) };
+    const skyHigh = { x: vbX(vw * 0.32), y: pageY(document.getElementById('departure'), 380) };
 
     const destPts = DESTINATIONS.map((d, i) => {
       const sec = document.getElementById(`d-${d.num}`);
-      const side = i % 2 === 0 ? 0.20 : 0.80;
+      // Revert to alternating side to follow the alternating layout
+      const side = i % 2 === 0 ? 0.80 : 0.20;
       return { x: vbX(vw * side), y: pageY(sec, 280) };
     });
 
+    const isMobile = vw <= 880;
     const returnSky  = { x: vbX(vw * 0.50), y: pageY(document.getElementById('return'), 80) };
-    const returnTree = { x: vbX(vw * 0.72), y: pageY(document.querySelector('#return .tree-full'), 240) };
-    const ctaPt      = { x: vbX(vw * 0.50), y: pageY(document.getElementById('begin'), 200) };
-    const footPt     = { x: vbX(vw * 0.50), y: pageY(document.querySelector('footer.foot'), 80) };
-    // Always pin final point to near document bottom so path covers full scroll range
-    const docEndPt   = { x: vbX(vw * 0.50), y: docH - 80 };
+    // The tree is painted into the right side of the return background image.
+    const returnTree = { x: vbX(isMobile ? vw * 0.5 : vw * 0.75), y: pageY(document.getElementById('return'), isMobile ? 400 : 600) };
 
-    const pts = [heroSky, heroDown, branchLand, lift, skyHigh, ...destPts, returnSky, returnTree, ctaPt, footPt, docEndPt];
+    const pts = [heroSky, heroDown, branchLand, lift, skyHigh, ...destPts, returnSky, returnTree];
 
     function smoothPath(P: { x: number; y: number }[]) {
       if (P.length < 2) return '';
@@ -254,6 +268,10 @@ export default function App() {
     drawn.style.strokeDashoffset = `${total}`;
     drawn.classList.remove('drawn');
     drawn.classList.add('drawn-solid');
+
+    const maxSy = Math.max(100, returnTree.y - window.innerHeight * 0.5);
+    path.dataset.maxSy = String(maxSy);
+    drawn.dataset.maxSy = String(maxSy);
   }, []);
 
   useEffect(() => {
@@ -287,12 +305,44 @@ export default function App() {
       const docH = document.documentElement.scrollHeight - window.innerHeight;
       const p = docH > 0 ? Math.max(0, Math.min(1, sy / docH)) : 0;
       document.documentElement.style.setProperty('--t', p.toFixed(4));
-      applyTOD(todAtProgress(p));
+      
+      let opacity = 1;
+      let blackProgress = 0;
+      const returnEl = document.getElementById('return');
+      if (returnEl && docH > 0) {
+        // Start fading the day image out when the user scrolls into the section gap
+        const fadeStart = returnEl.offsetTop - window.innerHeight * 0.7;
+        const fadeEnd = returnEl.offsetTop + window.innerHeight * 0.1;
+        
+        if (sy > fadeStart) {
+          opacity = 1 - (sy - fadeStart) / (fadeEnd - fadeStart);
+        }
+        opacity = Math.max(0, Math.min(1, opacity));
+      }
+      
+      const ctaEl = document.getElementById('begin');
+      if (ctaEl && docH > 0) {
+        // Start fading page background to solid pitch black when entering CTA section
+        const blackFadeStart = ctaEl.offsetTop - window.innerHeight;
+        const blackFadeEnd = ctaEl.offsetTop - window.innerHeight * 0.5;
+        
+        if (sy > blackFadeStart) {
+          blackProgress = (sy - blackFadeStart) / (blackFadeEnd - blackFadeStart);
+        }
+        blackProgress = Math.max(0, Math.min(1, blackProgress));
+      }
+      
+      document.documentElement.style.setProperty('--day-opacity', String(opacity));
+      const nightProgress = 1 - opacity;
+      
+      applyTOD(todAtProgress(p, nightProgress, blackProgress));
 
       const drawn = flightPathDrawnRef.current;
       if (drawn) {
         const total = parseFloat(drawn.dataset.total ?? '0') || drawn.getTotalLength();
-        drawn.style.strokeDashoffset = `${total * (1 - p)}`;
+        const maxSy = parseFloat(drawn.dataset.maxSy || String(docH));
+        const pathP = maxSy > 0 ? Math.max(0, Math.min(1, sy / maxSy)) : 0;
+        drawn.style.strokeDashoffset = `${total * (1 - pathP)}`;
       }
 
       // Lerp bird toward scroll-updated target — smooth catch-up, no jitter
@@ -356,9 +406,10 @@ export default function App() {
         if (total <= 0) return;
         const sy = window.scrollY;
         const docH = document.documentElement.scrollHeight - window.innerHeight;
-        const p = docH > 0 ? Math.max(0, Math.min(1, sy / docH)) : 0;
+        const maxSy = parseFloat(path.dataset.maxSy || String(docH));
+        const p = maxSy > 0 ? Math.max(0, Math.min(1, sy / maxSy)) : 0;
         const len = total * p;
-        const pt  = path.getPointAtLength(len);
+        const pt = path.getPointAtLength(len);
         const pt2 = path.getPointAtLength(Math.min(total, len + 8));
         const hw = window.innerWidth;
         const screenX = Math.max(-56, Math.min(hw + 56, (pt.x / 1000) * hw));
@@ -414,7 +465,7 @@ export default function App() {
         const chirp = () => {
           const osc = ctx.createOscillator();
           const g = ctx.createGain();
-          const f = notes[Math.floor(Math.random()*notes.length)] * (Math.random() > 0.5 ? 1 : 1.5);
+          const f = notes[Math.floor(Math.random() * notes.length)] * (Math.random() > 0.5 ? 1 : 1.5);
           osc.type = 'sine'; osc.frequency.value = f;
           g.gain.value = 0;
           g.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.05);
@@ -426,11 +477,11 @@ export default function App() {
         chirp();
         audioRef.current = { ctx, master };
         setSoundOn(true);
-      } catch (_) {}
+      } catch (_) { }
     } else {
       if (audioRef.current) {
-        try { audioRef.current.master.gain.exponentialRampToValueAtTime(0.0001, audioRef.current.ctx.currentTime + 0.4); } catch (_) {}
-        setTimeout(() => { try { audioRef.current?.ctx.close(); } catch (_) {} }, 500);
+        try { audioRef.current.master.gain.exponentialRampToValueAtTime(0.0001, audioRef.current.ctx.currentTime + 0.4); } catch (_) { }
+        setTimeout(() => { try { audioRef.current?.ctx.close(); } catch (_) { } }, 500);
       }
       audioRef.current = null;
       setSoundOn(false);
