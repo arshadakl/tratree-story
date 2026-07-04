@@ -312,7 +312,7 @@ export function Departure() {
       <style>{`
         .departure { padding-top: 20vh; padding-bottom: 14vh; min-height: 100vh; position: relative; }
         .departure-inner { max-width: var(--maxw); margin: 0 auto; text-align: center; }
-        .clouds { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+        .clouds { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
         .clouds .cloud { position: absolute; background: rgba(255,255,255,0.55); border-radius: 50%; filter: blur(6px); }
         .departure .frame { font-family: var(--display); font-style: italic; font-size: clamp(20px, 2.2vw, 28px); color: var(--ink-soft); max-width: 32ch; margin: 28px auto 0; }
       `}</style>
