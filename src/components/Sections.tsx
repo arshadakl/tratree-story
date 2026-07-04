@@ -278,8 +278,8 @@ export function DestinationPanel({ num, place, country, coords, day, diary, pale
   const SceneComp = SCENES[sceneName];
   return (
     <section className="dest" id={`d-${num}`}>
-      <div className={`dest-grid ${position === 'right' ? 'right' : ''}`}>
-        <div className="dest-meta" style={{ order: position === 'right' ? 2 : 1 }}>
+      <div className={`dest-grid ${position}`}>
+        <div className="dest-meta">
           <Reveal>
             <div className="stamp">
               <span className="glyph">{romanize(num)}</span>
@@ -305,7 +305,7 @@ export function DestinationPanel({ num, place, country, coords, day, diary, pale
             </div>
           </Reveal>
         </div>
-        <div style={{ order: position === 'right' ? 1 : 2 }}>
+        <div className="dest-art-container">
           <Reveal>
             <div className="dest-art" style={{ background: palette.bg }}>
               {SceneComp && <SceneComp />}
@@ -415,7 +415,7 @@ export function CTA() {
         </Reveal>
         <Reveal delay={550}>
           <div style={{ marginTop: 48 }}>
-            <button className="cta-pill">
+            <button className="cta-pill" onClick={() => window.location.href = 'mailto:hello@tratree.travel?subject=' + encodeURIComponent(picked ? `Tell me about ${picked}` : 'Let\'s talk about travel')}>
               {picked ? `Tell us about ${picked}` : 'Talk to us'}
               <svg viewBox="0 0 24 24"><path d="M5 12 L 19 12 M 13 6 L 19 12 L 13 18" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
@@ -439,30 +439,10 @@ export function Foot() {
     <footer className="foot">
       <style>{`
         .foot { background: linear-gradient(to bottom, transparent 0%, rgba(56, 34, 15, 0.25) 60%, rgba(26, 18, 8, 0.8) 100%); }
-        .foot .roots-svg { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 80%; z-index: 1; pointer-events: none; }
         .foot .bottom-row { max-width: var(--maxw); margin: 80px auto 0; padding-top: 24px; border-top: 1px solid rgba(241,232,210,0.15); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 12px; color: rgba(241,232,210,0.7); position: relative; z-index: 2; }
         .foot .foot-col a { color: rgba(241,232,210,0.9); }
         .foot .foot-col h6 { color: rgba(241,232,210,0.55); }
       `}</style>
-
-      <svg className="roots-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMin meet">
-        <g stroke="#3d2615" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.85">
-          <path d="M 500 0 C 500 80, 480 160, 460 240" />
-          <path d="M 500 0 C 510 80, 530 180, 540 260" />
-          <path d="M 480 80 C 400 120, 320 180, 240 240" />
-          <path d="M 520 80 C 600 120, 680 180, 760 240" />
-          <path d="M 470 160 C 360 220, 240 280, 120 340" />
-          <path d="M 530 160 C 640 220, 760 280, 880 340" />
-          <path d="M 500 240 C 380 320, 240 380, 100 440" />
-          <path d="M 500 240 C 620 320, 760 380, 900 440" />
-        </g>
-        <g transform="translate(420, 70) scale(0.7)">
-          <ellipse cx="20" cy="14" rx="14" ry="7" fill="#1f1106" />
-          <circle cx="32" cy="10" r="5" fill="#1f1106" />
-          <path d="M 38 10 L 44 9 L 38 12 Z" fill="#d99a4b" />
-        </g>
-        <text x="500" y="20" textAnchor="middle" fontFamily="Instrument Serif" fontSize="22" fill="#3d2615">tratree</text>
-      </svg>
 
       <div className="foot-grid">
         <div className="foot-col">
@@ -489,8 +469,8 @@ export function Foot() {
         </div>
         <div className="foot-col">
           <h6>Nest</h6>
-          <a href="#">hello@tratree.travel</a>
-          <a href="#">+91 · 9800 000 000</a>
+          <a href="mailto:hello@tratree.travel">hello@tratree.travel</a>
+          <a href="tel:+919800000000">+91 · 9800 000 000</a>
           <a href="#">India</a>
           <a href="#">Instagram · Are.na</a>
         </div>
