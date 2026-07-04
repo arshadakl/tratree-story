@@ -169,9 +169,26 @@ body::after {
   opacity: 0.78;
 }
 .nav a:hover { opacity: 1; border-bottom-color: currentColor; }
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 4px;
+}
+.mobile-menu-btn .bar {
+  width: 26px;
+  height: 2px;
+  background-color: var(--tod-ink, var(--ink));
+  border-radius: 2px;
+  transition: background-color 600ms ease;
+}
 @media (max-width: 600px) {
   .nav { display: none; }
   .chrome { padding: 8px var(--pad); flex-direction: row; }
+  .mobile-menu-btn { display: flex; }
 }
 
 /* diary + sound corner */
@@ -470,44 +487,19 @@ p.body {
 }
 .dest-art {
   position: relative;
-  aspect-ratio: 4 / 5;
   width: 100%;
-  overflow: hidden;
-  border-radius: 2px;
-  background: var(--paper-deep);
-  box-shadow:
-    0 1px 0 rgba(0,0,0,0.05) inset,
-    0 18px 60px -32px rgba(56,34,15,0.4);
-}
-.dest-art > svg { display: block; width: 100%; height: 100%; filter: url(#wc-global); }
-.dest-art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 60px 6px rgba(241,232,210,0.5);
-  mix-blend-mode: screen;
-  opacity: 0.85;
-}
-.dest-art::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.18'/></svg>");
   mix-blend-mode: multiply;
-  opacity: 0.5;
 }
 .dest-meta { padding-bottom: 12px; }
 .dest-num {
   font-family: var(--display);
-  font-style: italic;
-  font-size: clamp(80px, 12vw, 180px);
-  line-height: 0.85;
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(60px, 9vw, 130px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
   color: var(--ink);
-  opacity: 0.92;
-  margin: 0 0 8px;
+  margin: 0 0 12px;
 }
 .dest-coord {
   font-family: var(--sans);
@@ -525,21 +517,34 @@ p.body {
   max-width: 28ch;
   margin: 0 0 16px;
 }
+.dest-separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 24px;
+  width: 240px;
+}
+.dest-separator .sep-line {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+.dest-separator .sep-leaf {
+  opacity: 0.6;
+}
 .offer-card {
   display: flex;
   align-items: center;
   gap: 24px;
   justify-content: space-between;
-  border-top: 1px solid var(--rule);
-  padding-top: 18px;
-  margin-top: 28px;
+  margin-top: 0;
   flex-wrap: wrap;
 }
 .offer-card .tagline-text {
-  font-family: var(--display);
-  font-style: italic;
-  font-size: clamp(15px, 1.4vw, 18px);
-  line-height: 1.4;
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1.6;
   color: var(--ink-soft);
   flex: 1;
   min-width: 0;
@@ -557,10 +562,29 @@ p.body {
   cursor: pointer;
   white-space: nowrap;
   text-decoration: none;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   transition: background 240ms ease, color 240ms ease;
 }
 .offer-card .btn:hover { background: var(--ink); color: var(--paper); }
+.dest-day-footer {
+  font-family: var(--hand);
+  font-size: 26px;
+  color: var(--bark-deep);
+  margin-top: 60px;
+  position: relative;
+  display: inline-block;
+}
+.dest-day-footer::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+}
 
 /* leaf markers */
 .leaf-marker {
@@ -642,7 +666,7 @@ footer.foot {
 }
 .foot-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   gap: 32px;
   max-width: var(--maxw);
   margin: 0 auto;
@@ -650,7 +674,7 @@ footer.foot {
   position: relative;
   z-index: 2;
 }
-@media (max-width: 880px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 880px) { .foot-grid { grid-template-columns: 1fr; } }
 .foot-col h6 {
   font-family: var(--sans);
   font-size: 11px;

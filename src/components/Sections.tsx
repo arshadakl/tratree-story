@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import treeDreamedImg from '../assets/images/tree-dreamed.png?url';
+import heroBgImg from '../assets/images/hero-bg.png?url';
 import branchImg from '../assets/images/branch.png?url';
 import treeWorldImg from '../assets/images/tree-world.png?url';
+import lastTreeImg from '../assets/images/last-tree.png?url';
+import lastTreeDayImg from '../assets/images/last-tree-day.png?url';
 import { Tree, type LeafData } from './Tree';
 import { Bird, FarBird } from './Bird';
 import { SceneBackwater, SceneMistyHills, SceneTeaCountry, SceneWaterfall, SceneAlpine } from './Scenes';
@@ -49,27 +51,125 @@ export function Hero({ leavesOnTree, onLeafClick }: { leavesOnTree: LeafData[]; 
   return (
     <section id="wish" className="hero">
       <style>{`
-        .hero { position: relative; min-height: 110vh; padding-top: 12vh; padding-bottom: 8vh; display: grid; grid-template-columns: 1fr; align-items: end; }
-        .hero .hero-inner { max-width: var(--maxw); margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr; gap: 36px; padding-bottom: 88px; }
-        .hero .hero-headline { position: relative; z-index: 6; max-width: 18ch; }
-        .hero .hero-headline em { font-style: italic; }
-        .hero .hero-meta { display: flex; justify-content: space-between; gap: 28px; align-items: end; flex-wrap: wrap; }
-        .hero .scroll-cue { font-family: var(--sans); font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 12px; }
-        .hero .scroll-cue .line { width: 56px; height: 1px; background: currentColor; opacity: 0.6; position: relative; overflow: hidden; }
-        .hero .scroll-cue .line::after { content: ''; position: absolute; left: -30%; top: 0; width: 30%; height: 100%; background: var(--ink); animation: cueSlide 2.4s ease-in-out infinite; }
-        @keyframes cueSlide { 0% { left: -30%; } 60% { left: 100%; } 100% { left: 100%; } }
-        .hero .tree-stage { position: absolute; left: 50%; bottom: -6vh; transform: translateX(-50%); aspect-ratio: 600 / 800; height: 118vh; max-width: 96vw; width: auto; z-index: 2; }
-        @media (max-aspect-ratio: 1/1) { .hero .tree-stage { height: auto; width: 130vw; } }
-        .hero .sky-birds { position: absolute; right: clamp(20px, 8vw, 120px); top: clamp(80px, 14vh, 160px); z-index: 4; display: flex; gap: 18px; align-items: center; opacity: 0.7; }
-        .hero .sun-disk { position: absolute; right: 8vw; top: 18vh; width: clamp(120px, 18vw, 240px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 50% 50%, #f5e1aa 0%, #f5d99b 40%, rgba(245,217,155,0) 70%); z-index: 1; opacity: 0.85; pointer-events: none; }
-        .hero .drifting-leaves { position: absolute; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; }
-        .hero .drifting-leaves .dl { position: absolute; width: 14px; height: 14px; animation: drift 16s linear infinite; opacity: 0.7; }
-        @keyframes drift { 0% { transform: translate(0,0) rotate(0deg); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.7; } 100% { transform: translate(-160px, 80vh) rotate(420deg); opacity: 0; } }
-        .hero .footer-rule { display: flex; gap: 28px; align-items: end; padding-top: 24px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--ink-mute); letter-spacing: 0.06em; flex-wrap: wrap; }
-        @media (max-width: 600px) { .hero .footer-rule { flex-direction: column; align-items: start; gap: 10px; } }
+        .hero {
+          position: relative;
+          min-height: 100vh;
+          padding-top: 10vh;
+          padding-bottom: 4vh;
+          display: flex;
+          align-items: center;
+        }
+        .hero::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background-image: url(${heroBgImg});
+          background-size: cover;
+          background-position: center 68%;
+          background-repeat: no-repeat;
+          z-index: 1;
+          mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 0) 100%);
+          -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 0) 100%);
+          pointer-events: none;
+        }
+        @media (min-width: 1024px) {
+          .hero {
+            min-height: calc(100vw * 0.75);
+          }
+        }
+        .hero .br-desktop { display: inline; }
+        .hero .br-mobile { display: none; }
+        @media (max-width: 768px) {
+          .hero {
+            padding-top: 96px;
+            padding-bottom: 24px;
+            align-items: flex-start;
+          }
+          .hero::before {
+            background-position: 68% 80%;
+          }
+          .hero .br-desktop { display: none; }
+          .hero .br-mobile { display: inline; }
+        }
+        .hero .hero-inner {
+          max-width: var(--maxw);
+          margin: 0 auto;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          position: relative;
+          z-index: 2;
+        }
+        @media (max-width: 768px) {
+          .hero .hero-inner {
+            justify-content: flex-start;
+          }
+        }
+        .hero .hero-headline {
+          position: relative;
+          z-index: 6;
+          max-width: 480px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .hero .hero-headline h1.huge {
+          font-size: clamp(40px, 5.5vw, 72px);
+          line-height: 0.95;
+        }
+        .hero .hero-headline em {
+          font-style: italic;
+        }
+        .hero .hero-separator {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 20px 0;
+        }
+        .hero .hero-separator .sep-line-long {
+          width: 56px;
+          height: 1px;
+          background: var(--rule);
+        }
+        .hero .hero-separator .sep-line-short {
+          width: 16px;
+          height: 1px;
+          background: var(--rule);
+        }
+        .hero .hero-separator .sep-leaf {
+          opacity: 0.75;
+        }
+        .hero .hero-desc {
+          font-family: var(--sans);
+          font-size: clamp(14px, 1.5vw, 16px);
+          line-height: 1.6;
+          color: var(--ink-soft);
+          max-width: 38ch;
+          text-wrap: pretty;
+        }
+        .hero .drifting-leaves {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 3;
+          overflow: hidden;
+        }
+        .hero .drifting-leaves .dl {
+          position: absolute;
+          width: 14px;
+          height: 14px;
+          animation: drift 16s linear infinite;
+          opacity: 0.7;
+        }
+        @keyframes drift {
+          0% { transform: translate(0,0) rotate(0deg); opacity: 0; }
+          10% { opacity: 0.8; }
+          90% { opacity: 0.7; }
+          100% { transform: translate(-160px, 80vh) rotate(420deg); opacity: 0; }
+        }
       `}</style>
 
-      <div className="sun-disk" />
       <div className="drifting-leaves">
         {[
           { left: '20%', top: '22%', dur: '14s', delay: '0s', fill: '#9eb47e' },
@@ -86,41 +186,29 @@ export function Hero({ leavesOnTree, onLeafClick }: { leavesOnTree: LeafData[]; 
         ))}
       </div>
 
-      <div className="sky-birds">
-        <FarBird size={18} />
-        <FarBird size={12} />
-      </div>
-
-      <div className="tree-stage" id="heroTreeStage">
-        {/* <Tree variant="progressive" leaves={leavesOnTree} onLeafClick={onLeafClick} /> */}
-        <img
-          src={treeDreamedImg}
-          alt="The dreaming tree"
-          style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top center', display: 'block' }}
-        />
-      </div>
-
       <div className="hero-inner">
         <div className="hero-headline">
-          <div className="eyebrow" style={{ marginBottom: 28 }}>tratree — a travel brand</div>
+          <div className="eyebrow" style={{ marginBottom: 16 }}>TRATREE — A TRAVEL BRAND</div>
           <h1 className="huge display">
-            A tree once <em>dreamed</em><br />of travelling.
+            A tree <br className="br-desktop" />once<br />
+            <em>dreamed</em><br />
+            of <br className="br-desktop" />travelling.
           </h1>
-          <p className="lede" style={{ marginTop: 28, maxWidth: '36ch' }}>
-            You are the tree — rooted in the everyday, longing to see the world.<br />
-            tratree is the bird that brings India to you.
-          </p>
-        </div>
 
-        <div className="footer-rule">
-          <div className="scroll-cue">
-            <span>scroll to begin</span>
-            <span className="line"></span>
+          <div className="hero-separator">
+            <span className="sep-line-long"></span>
+            <svg className="sep-leaf" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 22C2 22 7.5 17 12 17M12 17C15 17 19.5 13.5 21.5 9.5C18.5 10.5 14 13.5 12 17ZM12 17C10.5 13.5 6 10.5 3 9.5C6 13.5 10.5 17 12 17ZM21.5 9.5C22.5 7.5 22 4.5 20 3C18.5 4.5 15.5 5 13.5 6.5C15.5 8 19.5 9.5 21.5 9.5Z" fill="#859a73" stroke="#4e6b46" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="sep-line-short"></span>
           </div>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: 36, fontFamily: 'var(--display)', fontStyle: 'italic', fontSize: 18 }}>
-            <span>est. an afternoon — a long time ago</span>
-            <span className="mono" style={{ letterSpacing: '0.06em', fontStyle: 'normal' }}>N 41.40° · E 2.17°</span>
-          </div>
+
+          <p className="hero-desc" style={{ marginBottom: 12 }}>
+            You are the tree — rooted in the everyday, longing to see the world.
+          </p>
+          <p className="hero-desc" style={{ marginBottom: 20 }}>
+            You are the bird that brings the stories home.
+          </p>
         </div>
       </div>
     </section>
@@ -282,12 +370,23 @@ export function DestinationPanel({ num, place, country, coords, day, diary, pale
         <div className="dest-meta">
           <Reveal>
             <div className="stamp">
-              <span className="glyph">{romanize(num)}</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', opacity: 0.8 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M2 22C2 22 7.5 17 12 17M12 17C15 17 19.5 13.5 21.5 9.5C18.5 10.5 14 13.5 12 17ZM12 17C10.5 13.5 6 10.5 3 9.5C6 13.5 10.5 17 12 17ZM21.5 9.5C22.5 7.5 22 4.5 20 3C18.5 4.5 15.5 5 13.5 6.5C15.5 8 19.5 9.5 21.5 9.5Z" />
+                </svg>
+              </span>
               <span>{country} · day {String(day).padStart(2, '0')}</span>
             </div>
           </Reveal>
           <Reveal delay={120}>
-            <h3 className="dest-num display it">{place}.</h3>
+            <h3 className="dest-num">
+              {place.split(' ').map((w, i, arr) => (
+                <React.Fragment key={i}>
+                  {w === '&' ? <span style={{ fontStyle: 'italic' }}>&</span> : w}
+                  {i < arr.length - 1 ? ' ' : ''}
+                </React.Fragment>
+              ))}.
+            </h3>
             <div className="dest-coord">{coords}</div>
           </Reveal>
           <Reveal delay={260}>
@@ -297,21 +396,28 @@ export function DestinationPanel({ num, place, country, coords, day, diary, pale
               </span>
               "{diary}"
             </p>
+            <div className="dest-separator">
+              <span className="sep-line"></span>
+              <svg className="sep-leaf" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M2 22C2 22 7.5 17 12 17M12 17C15 17 19.5 13.5 21.5 9.5C18.5 10.5 14 13.5 12 17ZM12 17C10.5 13.5 6 10.5 3 9.5C6 13.5 10.5 17 12 17ZM21.5 9.5C22.5 7.5 22 4.5 20 3C18.5 4.5 15.5 5 13.5 6.5C15.5 8 19.5 9.5 21.5 9.5Z" />
+              </svg>
+              <span className="sep-line"></span>
+            </div>
           </Reveal>
           <Reveal delay={380}>
             <div className="offer-card">
               <div className="tagline-text">{offer.tagline}</div>
-              <a href="#begin" className="btn">Talk to us</a>
+              <a href="#begin" className="btn">Talk to us <span>→</span></a>
             </div>
+          </Reveal>
+          <Reveal delay={450}>
+            <div className="dest-day-footer">day {String(day).padStart(2, '0')}</div>
           </Reveal>
         </div>
         <div className="dest-art-container">
           <Reveal>
-            <div className="dest-art" style={{ background: palette.bg }}>
+            <div className="dest-art">
               {SceneComp && <SceneComp />}
-              <div style={{ position: 'absolute', top: 16, right: 16, fontFamily: 'var(--hand)', color: 'rgba(255,255,255,0.85)', fontSize: 18, letterSpacing: '0.04em', mixBlendMode: 'screen' }}>
-                {place} · 20{20 + num}
-              </div>
             </div>
           </Reveal>
         </div>
@@ -327,51 +433,192 @@ export function Return({ onLeafClick }: { onLeafClick: (l: LeafData) => void }) 
   return (
     <section id="return" className="return-sec">
       <style>{`
-        .return-sec { padding-top: 18vh; padding-bottom: 12vh; min-height: 130vh; position: relative; }
-        .return-sec .return-grid { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: clamp(28px, 5vw, 80px); }
-        @media (max-width: 880px) { .return-sec .return-grid { grid-template-columns: 1fr; } }
-        .return-sec .tree-full { position: relative; height: 88vh; }
-        .return-sec .stars { position: absolute; inset: 0; pointer-events: none; z-index: -1; }
-        .return-sec .stars .star { position: absolute; width: 2px; height: 2px; background: var(--star); border-radius: 50%; opacity: 0.7; animation: twink 4s ease-in-out infinite; }
-        @keyframes twink { 0%,100%{opacity:0.3} 50%{opacity:0.9} }
+        .return-sec { 
+          margin-top: 30vh;
+          padding-top: 18vh; 
+          padding-bottom: 12vh; 
+          min-height: 120vh; 
+          position: relative; 
+          display: flex;
+          align-items: center;
+          z-index: 1;
+        }
+        .return-sec::before, .return-sec::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          background-size: cover;
+          background-position: center bottom;
+          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%, black 85%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, black 35%, black 85%, transparent 100%);
+        }
+        .return-sec::before {
+          background-image: url(${lastTreeImg});
+        }
+        .return-sec::after {
+          background-image: url(${lastTreeDayImg});
+          opacity: var(--day-opacity, 1);
+        }
+        .return-content { 
+          max-width: var(--maxw); 
+          margin: 0 auto; 
+          width: 100%;
+          position: relative;
+          z-index: 2;
+        }
+        .return-text-col {
+          max-width: 520px;
+          color: #dce4d8;
+        }
+        .return-text-col .eyebrow {
+          color: #dce4d8;
+          opacity: 0.8;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.2em;
+          font-size: 11px;
+        }
+        @media (max-width: 900px) {
+          .return-sec {
+            align-items: flex-end;
+            padding-bottom: 8vh;
+            min-height: auto;
+            padding-top: 90vw;
+            background: linear-gradient(to bottom, transparent 0%, transparent 30%, #000000 55%, #000000 100%);
+          }
+          .return-sec::before, .return-sec::after {
+            background-position: 58% 0%;
+            background-size: 180% auto;
+            background-repeat: no-repeat;
+            height: 100vw;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+          }
+          .return-content {
+            text-align: left;
+          }
+          .return-text-col {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .return-text-col .sep {
+            margin-left: 0;
+            margin-right: auto;
+          }
+        }
+        .return-text-col .eyebrow svg {
+          opacity: 0.7;
+        }
+        .return-text-col h2 {
+          font-family: var(--display);
+          font-weight: 400;
+          font-size: clamp(48px, 7.5vw, 88px);
+          line-height: 0.95;
+          letter-spacing: -0.01em;
+          color: #f1e8d2;
+          margin: 24px 0 32px;
+        }
+        .return-text-col h2 em {
+          font-style: italic;
+        }
+        .return-text-col .sep {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 32px;
+          opacity: 0.4;
+          width: 280px;
+        }
+        .return-text-col .sep-line {
+          flex: 1;
+          height: 1px;
+          background: currentColor;
+        }
+        .return-text-col .lede {
+          font-family: var(--sans);
+          font-size: 15px;
+          line-height: 1.6;
+          color: #f1e8d2;
+          opacity: 0.9;
+          margin-bottom: 24px;
+        }
+        .return-text-col .hand-text {
+          font-family: var(--hand);
+          font-size: 26px;
+          line-height: 1.3;
+          color: #d99a4b;
+          margin-bottom: 40px;
+        }
+        .return-text-col .btn-outline {
+          font-family: var(--sans);
+          font-size: 11px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #f1e8d2;
+          border: 1px solid rgba(241, 232, 210, 0.4);
+          background: transparent;
+          padding: 14px 28px;
+          border-radius: 999px;
+          cursor: pointer;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          transition: background 240ms ease, border-color 240ms ease;
+        }
+        .return-text-col .btn-outline:hover {
+          background: rgba(241, 232, 210, 0.1);
+          border-color: rgba(241, 232, 210, 0.8);
+        }
       `}</style>
 
-      <div className="stars">
-        {Array.from({ length: 40 }).map((_, i) => (
-          <div key={i} className="star" style={{
-            left: `${(i * 37) % 100}%`,
-            top: `${(i * 53) % 70}%`,
-            animationDelay: `${(i % 7) * 0.4}s`,
-          }} />
-        ))}
-      </div>
-
-      <div className="return-grid">
-        <div>
-          <Reveal><div className="eyebrow">vii — the return</div></Reveal>
-          <Reveal delay={100}>
-            <h2 className="big display" style={{ marginTop: 24, maxWidth: '14ch' }}>
-              The tree was <em>full of the world.</em>
-            </h2>
+      <div className="return-content">
+        <div className="return-text-col">
+          <Reveal>
+            <div className="eyebrow">
+              <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, border: '1px solid rgba(220,228,216,0.3)', borderRadius: '50%' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M3 13C6 13 8 11 10 11C12 11 14 13 16 13C18 13 20 11 21 10" />
+                  <path d="M12 7V11" />
+                </svg>
+              </span>
+              vii — the return
+            </div>
           </Reveal>
+
+          <Reveal delay={100}>
+            <h2>
+              The tree was<br />
+              <em>full</em> of the world.
+            </h2>
+            <div className="sep">
+              <span className="sep-line"></span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M2 22C2 22 7.5 17 12 17M12 17C15 17 19.5 13.5 21.5 9.5C18.5 10.5 14 13.5 12 17ZM12 17C10.5 13.5 6 10.5 3 9.5C6 13.5 10.5 17 12 17ZM21.5 9.5C22.5 7.5 22 4.5 20 3C18.5 4.5 15.5 5 13.5 6.5C15.5 8 19.5 9.5 21.5 9.5Z" />
+              </svg>
+              <span className="sep-line"></span>
+            </div>
+          </Reveal>
+
           <Reveal delay={250}>
-            <p className="lede" style={{ marginTop: 28, maxWidth: '36ch' }}>
+            <p className="lede">
               Every branch now carried a leaf from a place it now knew. The bird came home at dusk; the nest held eggs, glowing.
             </p>
           </Reveal>
+
           <Reveal delay={400}>
-            <div className="hand" style={{ marginTop: 28, fontSize: 24, color: 'var(--bark-deep)', maxWidth: '32ch' }}>
+            <div className="hand-text">
               the rooted tree has travelled the whole world through the bird's eyes — and so can you.
             </div>
+            <a href="#begin" className="btn-outline">
+              Read the story <span>→</span>
+            </a>
           </Reveal>
-        </div>
-        <div className="tree-full">
-          {/* <Tree variant="full" showNest showEggs onLeafClick={onLeafClick} /> */}
-          <img
-            src={treeWorldImg}
-            alt="The tree full of the world"
-            style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'bottom center', display: 'block' }}
-          />
         </div>
       </div>
     </section>
@@ -382,17 +629,11 @@ export function Return({ onLeafClick }: { onLeafClick: (l: LeafData) => void }) 
 // CTA
 // ────────────────────────────────────────────────
 export function CTA() {
-  const [picked, setPicked] = useState<string | null>(null);
-  const options = [
-    'Backwater Serenity', 'Misty Hill Escapes', 'Tea Country Dreams',
-    'Waterfall & Jungle', 'Alpine Meadows', "Somewhere I don't know yet",
-  ];
   return (
     <section id="begin" className="cta-sec">
       <style>{`
-        .cta-sec { padding-top: 16vh; padding-bottom: 16vh; min-height: 90vh; display: flex; align-items: center; justify-content: center; }
+        .cta-sec { padding-top: 10vh; padding-bottom: 12vh; min-height: 40vh; display: flex; align-items: center; justify-content: center; }
         .cta-inner { max-width: var(--maxw); width: 100%; margin: 0 auto; text-align: center; }
-        .cta-sec .picker button { white-space: normal; text-align: center; }
       `}</style>
       <div className="cta-inner">
         <Reveal><div className="eyebrow">viii — your turn</div></Reveal>
@@ -401,30 +642,13 @@ export function CTA() {
             Let tratree be your bird.
           </h2>
         </Reveal>
-        <Reveal delay={260}>
-          <p className="lede" style={{ marginTop: 24, maxWidth: '36ch', marginInline: 'auto' }}>
-            Where should the bird take you?
-          </p>
-        </Reveal>
-        <Reveal delay={400}>
-          <div className="picker" style={{ justifyContent: 'center', marginTop: 36 }}>
-            {options.map((o) => (
-              <button key={o} className={picked === o ? 'on' : ''} onClick={() => setPicked(o)}>{o}</button>
-            ))}
-          </div>
-        </Reveal>
-        <Reveal delay={550}>
-          <div style={{ marginTop: 48 }}>
-            <button className="cta-pill" onClick={() => window.location.href = 'mailto:hello@tratree.travel?subject=' + encodeURIComponent(picked ? `Tell me about ${picked}` : 'Let\'s talk about travel')}>
-              {picked ? `Tell us about ${picked}` : 'Talk to us'}
+        <Reveal delay={300}>
+          <div style={{ marginTop: 40 }}>
+            <button className="cta-pill" onClick={() => window.location.href = 'mailto:hello@tratree.travel?subject=Let\'s talk about travel'}>
+              Contact us
               <svg viewBox="0 0 24 24"><path d="M5 12 L 19 12 M 13 6 L 19 12 L 13 18" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           </div>
-        </Reveal>
-        <Reveal delay={680}>
-          <p style={{ marginTop: 20, fontFamily: 'var(--display)', fontStyle: 'italic', fontSize: 15, color: 'var(--ink-mute)' }}>
-            No forms. Just a conversation about where you want to go.
-          </p>
         </Reveal>
       </div>
     </section>
@@ -438,7 +662,7 @@ export function Foot() {
   return (
     <footer className="foot">
       <style>{`
-        .foot { background: linear-gradient(to bottom, transparent 0%, rgba(56, 34, 15, 0.25) 60%, rgba(26, 18, 8, 0.8) 100%); }
+        .foot { background: transparent; }
         .foot .bottom-row { max-width: var(--maxw); margin: 80px auto 0; padding-top: 24px; border-top: 1px solid rgba(241,232,210,0.15); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 12px; color: rgba(241,232,210,0.7); position: relative; z-index: 2; }
         .foot .foot-col a { color: rgba(241,232,210,0.9); }
         .foot .foot-col h6 { color: rgba(241,232,210,0.55); }
@@ -453,26 +677,27 @@ export function Foot() {
           <div className="hand" style={{ marginTop: 14, color: 'rgba(241,232,210,0.6)', fontSize: 18 }}>— from the story</div>
         </div>
         <div className="foot-col">
-          <h6>Journeys</h6>
-          <a href="#d-1">Backwater Serenity</a>
-          <a href="#d-2">Misty Hill Escapes</a>
-          <a href="#d-3">Tea Country Dreams</a>
-          <a href="#d-4">Waterfall &amp; Jungle</a>
-          <a href="#d-5">Alpine Meadows</a>
-        </div>
-        <div className="foot-col">
-          <h6>The Story</h6>
-          <a href="#wish">The Wish</a>
-          <a href="#arrival">The Pact</a>
-          <a href="#return">The Return</a>
-          <a href="#begin">Begin your flight</a>
-        </div>
-        <div className="foot-col">
-          <h6>Nest</h6>
-          <a href="mailto:hello@tratree.travel">hello@tratree.travel</a>
-          <a href="tel:+919800000000">+91 · 9800 000 000</a>
-          <a href="#">India</a>
-          <a href="#">Instagram · Are.na</a>
+          <h6>connect us</h6>
+          <a href="tel:+919526936172" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+            +91 9526936172
+          </a>
+          <a href="https://wa.me/919526936172?text=Hi%20Tratree%2C%20I%27d%20like%20to%20plan%20a%20journey%21" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#25D366' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style={{ verticalAlign: 'middle' }}>
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.413 9.863-9.864.001-2.641-1.024-5.124-2.888-6.991C16.582 1.884 14.1 .859 11.463.859 6.026.859 1.602 5.273 1.6 10.724c-.001 1.705.452 3.369 1.31 4.8l-.993 3.626 3.73-.976zM17.47 14.397c-.3-.149-1.777-.877-2.043-.974-.267-.098-.462-.149-.655.15-.192.298-.745.937-.912 1.13-.166.195-.333.22-.633.071-.3-.15-1.27-.468-2.42-1.493-.895-.799-1.5-1.786-1.677-2.084-.176-.3-.019-.461.13-.61.135-.133.3-.349.45-.523.15-.174.2-.3.3-.498.1-.199.05-.374-.025-.524-.075-.15-.655-1.579-.897-2.164-.236-.569-.475-.491-.655-.5-.17-.008-.364-.01-.559-.01-.195 0-.514.074-.783.374-.269.299-1.024 1.002-1.024 2.444 0 1.44 1.049 2.839 1.196 3.038.146.199 2.062 3.149 4.995 4.413.697.301 1.242.482 1.668.618.7.223 1.338.192 1.843.118.563-.081 1.777-.726 2.028-1.393.25-.667.25-1.238.176-1.393-.075-.15-.269-.249-.57-.398z" />
+            </svg>
+            WhatsApp Chat
+          </a>
+          <a href="https://www.instagram.com/tratreeofficial/" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+            </svg>
+            Instagram
+          </a>
         </div>
       </div>
 
